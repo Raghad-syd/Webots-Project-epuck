@@ -43,6 +43,32 @@ int main(int argc, char **argv) {
   double right_motor_speed = MAX_SPEED;
 
   while (wb_robot_step(TIME_STEP) != -1) {
+
+        // Check if the robot has reached 6 dead ends
+    if (dead_end_index >= 7) {
+      // Find the dead end with the maximum light intensity
+      double maximum_light_intensity = average_light_intensity[0];
+      int max_light_index = 0;
+      for (int i = 1; i < dead_end_index; i++) {
+        if (average_light_intensity[i] > maximum_light_intensity) {
+          maximum_light_intensity = average_light_intensity[i];
+          max_light_index = i;
+        }
+      }
+
+    // Detect walls using sensors 0-4 and 7
+    bool left_wall = ps_values[5] > THRESHOLD; // Left wall
+    bool front_wall = ps_values[7] > THRESHOLD; // Front wall
+
+    // New dead-end condition
+    bool is_dead_end = 
+                       ps_values[1] > THRESHOLD && // Mid left
+                       ps_values[5] > THRESHOLD && // Mid right
+                       ps_values[7] > THRESHOLD;  // Front
+    if (is_dead_end && dead_end_index < MAX_READINGS) {
+      // Dead-end detected
+      printf("Dead-end detected at index %d.\n", dead_end_index + 1);
+
     
     // Read proximity sensor values
     double ps_values[8];
