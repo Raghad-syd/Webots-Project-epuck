@@ -38,6 +38,33 @@ int main(int argc, char **argv) {
     ls[i] = wb_robot_get_device(sensor_name);
     wb_light_sensor_enable(ls[i], TIME_STEP);
   }
+
+  double left_motor_speed = MAX_SPEED;
+  double right_motor_speed = MAX_SPEED;
+
+  while (wb_robot_step(TIME_STEP) != -1) {
+// Turn around at the dead end
+      wb_motor_set_velocity(left_motor, MAX_SPEED);
+      wb_motor_set_velocity(right_motor, -MAX_SPEED);
+      wb_robot_step(1000); // Wait to complete turn
+     else if (front_wall) {
+      // Turn right if there's a wall in front
+      left_motor_speed = MAX_SPEED;
+      right_motor_speed = -MAX_SPEED;
+    } else if (left_wall) {
+      // Move straight if there's a wall on the left
+      left_motor_speed = MAX_SPEED;
+      right_motor_speed = MAX_SPEED;
+    } else {
+      // Turn left if no walls are detected
+      left_motor_speed = MAX_SPEED / 8;
+      right_motor_speed = MAX_SPEED;
+    }
+    // Set motor velocities
+    wb_motor_set_velocity(left_motor, left_motor_speed);
+    wb_motor_set_velocity(right_motor, right_motor_speed);
+  }
+
   wb_robot_cleanup();
   return 0;
-}
+  }
