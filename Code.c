@@ -43,6 +43,19 @@ int main(int argc, char **argv) {
   double right_motor_speed = MAX_SPEED;
 
   while (wb_robot_step(TIME_STEP) != -1) {
+    
+    // Read proximity sensor values
+    double ps_values[8];
+    for (int i = 0; i < 8; i++) {
+      ps_values[i] = wb_distance_sensor_get_value(ps[i]);
+    }
+
+    // Read light sensor values
+    double ls_values[8];
+    for (int i = 0; i < 8; i++) {
+      ls_values[i] = wb_light_sensor_get_value(ls[i]);
+    }
+
 // Turn around at the dead end
       wb_motor_set_velocity(left_motor, MAX_SPEED);
       wb_motor_set_velocity(right_motor, -MAX_SPEED);
